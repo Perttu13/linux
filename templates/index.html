@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Viikko 2 - Oma verkkosivu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Minun viikon 2 verkkosivuni</h1>
+
+    <p>Tervetuloa sivulleni!</p>
+
+    <h2>Kävijälaskuri</h2>
+    <p>Tämä sivu on ladattu <strong>{{ visits }}</strong> kertaa.</p>
+
+    <h2>Tietokanta</h2>
+    <p>Kävijälaskurin tiedot tallennetaan SQLite-tietokantaan.
+    Tiedot säilyvät palvelimen uudelleenkäynnistyksen jälkeen,
+    koska ne tallennetaan pysyvään tiedostoon.</p>
+
+    <h2>GitHub</h2>
+    <p><a href="LISAA_GITHUB_LINKKISI">Projektini GitHubissa</a></p>
+
+    <h2>Testaus</h2>
+    <p>Palvelimen uudelleenkäynnistyksen jälkeen tarkistan,
+    että kävijälaskurin lukema säilyy.</p>
+</body>
+</html>
