@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Viikko 2 - Oma verkkosivu</title>
+    <title>Week 2 - My Website</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Minun viikon 2 verkkosivuni</h1>
+    <h1>My Week 2 Website</h1>
+    <p>Welcome to my website!</p>
 
-    <p>Tervetuloa sivulleni!</p>
+    <h2>Visitor Counter</h2>
+    <p>This page has been visited <strong>{{ visits }}</strong> times.</p>
 
-    <h2>Kävijälaskuri</h2>
-    <p>Tämä sivu on ladattu <strong>{{ visits }}</strong> kertaa.</p>
-
-    <h2>Tietokanta</h2>
-    <p>Kävijälaskurin tiedot tallennetaan SQLite-tietokantaan.
-    Tiedot säilyvät palvelimen uudelleenkäynnistyksen jälkeen,
-    koska ne tallennetaan pysyvään tiedostoon.</p>
+    <h2>Database</h2>
+    <p>The visitor counter data is stored in an SQLite database.
+    The data is saved in a persistent file on the server, so it
+    remains available after a server restart.</p>
 
     <h2>GitHub</h2>
-    <p><a href="https://github.com/Perttu13/linux">Projektini GitHubissa</a></p>
+    <p><a href="https://github.com/Perttu13/linux" target="_blank" rel="noopener noreferrer">View my project on GitHub</a></p>
 
-    <h2>Testaus</h2>
-    <p>Testasin palvelimen uudelleenkäynnistyksen. Kävijälaskurin lukema säilyi,
-    koska tiedot tallennetaan pysyvästi SQLite-tietokantaan.</p>
+    <h2>Testing</h2>
+    <p>I tested the application by restarting the server.
+    The visitor counter value was preserved because the data
+    is stored in the SQLite database.</p>
 </body>
 </html>
