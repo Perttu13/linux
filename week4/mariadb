@@ -1,0 +1,17 @@
+
+# Server A - pääpalvelin
+# /etc/mysql/mariadb.conf.d/50-server.cnf
+
+[mysqld]
+server-id = 1
+log_bin = /var/log/mysql/mysql-bin.log
+binlog_format = ROW
+bind-address = 192.168.1.224
+
+# Server B - replika
+# Server B:n omassa asetustiedostossa käytetään seuraavia asetuksia:
+
+# server-id = 2
+# relay_log = mariadb-relay-bin
+# read_only = ON
+# bind-address = 127.0.0.1
