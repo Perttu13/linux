@@ -1,0 +1,2 @@
+# Suorita WWW-varmuuskopiointi joka tunti tasatunnein
+0 * * * * /home/ubuntu/scripts/backup-www.sh
