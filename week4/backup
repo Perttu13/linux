@@ -1,0 +1,22 @@
+
+#!/bin/bash
+
+SOURCE="ubuntu@192.168.1.224:/var/www/html/"
+DATE=$(date +"%Y-%m-%d_%H-%M-%S")
+BACKUP="/var/backups/www-versions/$DATE"
+LOG="/home/ubuntu/backup-www.log"
+SSH_KEY="/home/ubuntu/.ssh/id_ed25519_week4_backup"
+
+mkdir -p "$BACKUP"
+
+echo "[$(date)] Backup started" >> "$LOG"
+
+rsync -avz \
+  -e "ssh -i $SSH_KEY -o BatchMode=yes" \
+  "$SOURCE" "$BACKUP/" >> "$LOG" 2>&1
+
+if [ $? -eq 0 ]; then
+    echo "[$(date)] Backup successful: $BACKUP" >> "$LOG"
+else
+    echo "[$(date)] Backup FAILED" >> "$LOG"
+fi
