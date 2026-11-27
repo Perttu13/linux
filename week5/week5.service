@@ -1,0 +1,18 @@
+[Unit]
+Description=Week 5 Local AI Chat
+After=network.target mariadb.service ollama.service
+Requires=mariadb.service ollama.service
+
+[Service]
+Type=simple
+User=week5
+Group=week5
+WorkingDirectory=/opt/week5
+EnvironmentFile=/etc/week5.env
+EnvironmentFile=/opt/week5/deploy.env
+ExecStart=/opt/week5/venv/bin/gunicorn --workers 1 --threads 2 --timeout 240 --bind 127.0.0.1:5002 app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
