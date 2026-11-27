@@ -1,0 +1,87 @@
+
+name: Week 5 CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "week5/**"
+      - ".github/workflows/week5-ci-cd.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "week5/**"
+      - ".github/workflows/week5-ci-cd.yml"
+
+jobs:
+  test:
+    name: Test and lint
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: week5
+
+    env:
+      SECRET_KEY: test-only-secret-key
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Ruff
+        run: ruff check .
+
+      - name: Run tests
+        run: pytest -v
+
+  deploy:
+    name: Deploy to Server A
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Copy application to Server A
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh "$SERVER_USER@$SERVER_HOST" \
+            "rm -rf /tmp/week5-release"
+          scp -r week5 "$SERVER_USER@$SERVER_HOST:/tmp/week5-release"
+
+      - name: Deploy application
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh "$SERVER_USER@$SERVER_HOST" \
+            "sudo bash /tmp/week5-release/deploy.sh /tmp/week5-release $GITHUB_SHA"
