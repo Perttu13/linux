@@ -18,12 +18,11 @@ class FakeCursor:
     def __exit__(self, *args):
         return False
 
-       def execute(self, query, params=None):
+    def execute(self, query, params=None):
         if query.startswith("INSERT"):
             role = "user" if "'user'" in query else "assistant"
             self.saved_messages.append(
                 {"role": role, "content": params[1]}
-            
             )
 
     def fetchall(self):
@@ -97,3 +96,4 @@ def test_chat_with_mock_database_and_llm(monkeypatch):
     assert response.json["reply"] == "Hello! I am a local AI."
     mock_post.assert_called_once()
     assert len(connection.fake_cursor.saved_messages) == 2
+
