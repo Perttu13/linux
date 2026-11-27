@@ -26,6 +26,13 @@ jobs:
 
     env:
       SECRET_KEY: test-only-secret-key
+      DB_HOST: localhost
+      DB_USER: test
+      DB_PASSWORD: test
+      DB_NAME: test
+      DB_SOCKET: /tmp/test.sock
+      OLLAMA_URL: http://localhost:11434
+      OLLAMA_MODEL: test-model
 
     steps:
       - name: Checkout repository
@@ -47,8 +54,6 @@ jobs:
       - name: Run tests
         run: pytest -v
 
-  deploy:
-    
   deploy:
     name: Deploy to Server A
     needs: test
