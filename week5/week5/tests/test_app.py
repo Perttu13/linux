@@ -44,6 +44,9 @@ class FakeConnection:
 
 def setup_client():
     app.app.config["TESTING"] = True
+    app.app.template_folder = str(
+        Path(__file__).resolve().parents[1] / "templates"
+    )
     return app.app.test_client()
 
 
@@ -71,6 +74,9 @@ def test_empty_message_is_rejected():
 
 
 def test_chat_with_mock_database_and_llm(monkeypatch):
+    monkeypatch.setenv("OLLAMA_URL", "http://localhost:11434")
+    monkeypatch.setenv("OLLAMA_MODEL", "test-model")
+
     client = setup_client()
     connection = FakeConnection()
 
@@ -96,4 +102,3 @@ def test_chat_with_mock_database_and_llm(monkeypatch):
     assert response.json["reply"] == "Hello! I am a local AI."
     mock_post.assert_called_once()
     assert len(connection.fake_cursor.saved_messages) == 2
-
