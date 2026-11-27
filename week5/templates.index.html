@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Local AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 16px;
+            background: #f4f6f8;
+        }
+        h1 { text-align: center; }
+        #messages {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 300px;
+            margin-bottom: 16px;
+        }
+        .message { margin: 12px 0; white-space: pre-wrap; }
+        .user { color: #174ea6; }
+        .assistant { color: #176b3a; }
+        form { display: flex; gap: 8px; }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+        }
+        button {
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 6px;
+            background: #2457a7;
+            color: white;
+            cursor: pointer;
+        }
+        button:disabled { opacity: 0.5; }
+        #status { color: #555; min-height: 24px; }
+    </style>
+</head>
+<body>
+    <h1>Local AI Chat</h1>
+    <div id="messages" aria-live="polite"></div>
+    <p id="status"></p>
+    <form id="chat-form">
+        <input id="message" maxlength="4000"
+               placeholder="Write a message..." required>
+        <button id="send" type="submit">Send</button>
+    </form>
+    <p><button id="new-chat" type="button">New chat</button></p>
+
+    <script>
+        const messages = document.getElementById("messages");
+        const status = document.getElementById("status");
+        const form = document.getElementById("chat-form");
+        const input = document.getElementById("message");
+        const send = document.getElementById("send");
+
+        function addMessage(role, content) {
+            const item = document.createElement("div");
+            item.className = "message " + role;
+            item.textContent = role + ": " + content;
+            messages.appendChild(item);
+        }
+
+        async function loadMessages() {
+            const response = await fetch("./api/messages");
+            if (!response.ok) throw new Error("Could not load messages");
+            const history = await response.json();
+            messages.replaceChildren();
+            history.forEach(item => addMessage(item.role, item.content));
+        }
+
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage("user", message);
+            input.value = "";
+            send.disabled = true;
+            status.textContent = "The model is thinking...";
+
+            try {
+                const response = await fetch("./api/chat", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({message})
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Request failed");
+                addMessage("assistant", data.reply);
+                status.textContent = "";
+            } catch (error) {
+                status.textContent = error.message;
+            } finally {
+                send.disabled = false;
+                input.focus();
+            }
+        });
+
+        document.getElementById("new-chat").addEventListener("click", async () => {
+            const response = await fetch("./api/new", {method: "POST"});
+            if (response.ok) {
+                messages.replaceChildren();
+                status.textContent = "New conversation started.";
+            } else {
+                status.textContent = "Could not start a new conversation.";
+            }
+        });
+
+        loadMessages().catch(error => {
+            status.textContent = error.message;
+        });
+    </script>
+</body>
+</html>
