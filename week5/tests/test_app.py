@@ -3,9 +3,13 @@ import sys
 from pathlib import Path
 from unittest.mock import Mock
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+# Käytetään nimenomaan Week 5 -kansion app.py-tiedostoa.
+APP_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(APP_DIR))
 
 import app
+
+app.app.template_folder = str(APP_DIR / "templates")
 
 
 class FakeCursor:
@@ -44,9 +48,6 @@ class FakeConnection:
 
 def setup_client():
     app.app.config["TESTING"] = True
-    app.app.template_folder = str(
-        Path(__file__).resolve().parents[1] / "templates"
-    )
     return app.app.test_client()
 
 
@@ -102,3 +103,4 @@ def test_chat_with_mock_database_and_llm(monkeypatch):
     assert response.json["reply"] == "Hello! I am a local AI."
     mock_post.assert_called_once()
     assert len(connection.fake_cursor.saved_messages) == 2
+
