@@ -1,4 +1,4 @@
-
+```yaml
 name: Week 5 CI/CD
 
 on:
@@ -71,7 +71,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
@@ -82,12 +82,4 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           ssh "$SERVER_USER@$SERVER_HOST" "rm -rf /tmp/week5-release"
-          scp -r week5 "$SERVER_USER@$SERVER_HOST:/tmp/week5-release"
-
-      - name: Deploy application
-        env:
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-        run: |
-          ssh "$SERVER_USER@$SERVER_HOST" "sudo bash /tmp/week5-release/deploy.sh /tmp/week5-release $GITHUB_SHA"
-
+          scp -r week5 "$SERVER_USER@$SERVER_HOST:/
