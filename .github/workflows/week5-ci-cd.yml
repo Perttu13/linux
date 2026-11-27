@@ -48,6 +48,8 @@ jobs:
         run: pytest -v
 
   deploy:
+    
+  deploy:
     name: Deploy to Server A
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -74,8 +76,7 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          ssh "$SERVER_USER@$SERVER_HOST" \
-            "rm -rf /tmp/week5-release"
+          ssh "$SERVER_USER@$SERVER_HOST" "rm -rf /tmp/week5-release"
           scp -r week5 "$SERVER_USER@$SERVER_HOST:/tmp/week5-release"
 
       - name: Deploy application
@@ -83,5 +84,5 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
-          ssh "$SERVER_USER@$SERVER_HOST" \
-            "sudo bash /tmp/week5-release/deploy.sh /tmp/week5-release $GITHUB_SHA"
+          ssh "$SERVER_USER@$SERVER_HOST" "sudo bash /tmp/week5-release/deploy.sh /tmp/week5-release $GITHUB_SHA"
+
