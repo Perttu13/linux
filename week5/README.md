@@ -101,13 +101,6 @@ They verify:
 - Empty messages are rejected.
 - Chat responses work with mocked database and Ollama services.
 
-To run the checks locally from this directory:
-
-```bash
-pip install -r requirements.txt
-ruff check .
-pytest -v
-```
 
 ## 9. Week 4 compatibility
 
